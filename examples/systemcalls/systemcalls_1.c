@@ -1,11 +1,11 @@
 #include "systemcalls.h"
-/*#include "stdlib.h"
+#include "stdlib.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-*//**
+/**
  * @param cmd the command to execute with system()
  * @return true if the command in @param cmd was executed
  *   successfully using the system() call, false if an error occurred,
@@ -22,7 +22,7 @@ bool do_system(const char *cmd)
 */
     int ret = system(cmd);
     if(ret == -1) {
-	   // perror("System() fsiled");
+	    perror("System() fsiled");
 	    return false;
     }
     return true;
@@ -66,40 +66,7 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
-  /*  pid_t pid = fork();
-    int status;
-    switch(pid)
-    {
-	    case 0: //child process
-		    int err = execv(command[0], &command[0]);
-		    if(err == -1){
-			    printf("Failed************ Execv ----   %d",err);
-			    exit(1);
-		    }
-		    break;
-	    case -1: 
-		    printf("Failed tocreate process");
-		    return 0;
-	    default:
-		    printf("Parent Process ");
-		    break;
-    }
-    wait(&status);
-    if(WIFEXITED(status)){
-	    if(WEXITSTATUS(status) == 0){
-		    return 1;
-	    } else {
-		    return 0;
-	    }
-    }
-    else {
-	    return 0;
-    }
-    va_end(args);
-}*/
-   int status = 0;
-  // bool error = true;
-   pid_t pid = fork();
+    pid_t pid = fork();
     if (pid < 0){
 	    perror("Error : Fork");
 	    va_end(args);
@@ -113,7 +80,7 @@ bool do_exec(int count, ...)
 	   }
     }
     else {
-	    
+	    int status;
 	    if(waitpid(pid, &status, 0) == -1){
 		    perror("Error : waitpid");
 		    va_end(args);
@@ -127,6 +94,7 @@ bool do_exec(int count, ...)
     va_end(args);
     return true;
 }
+
 /**
 * @param outputfile - The full path to the file to write with command output.
 *   This file will be closed at completion of the function call.
@@ -155,41 +123,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *   The rest of the behaviour is same as do_exec()
  *
 */
-    int kidpid;
-    int fd = open(outputfile, O_WRONLY|O_TRUNC|O_CREAT, 0644);
-    if(fd < 0){
-	    printf("Error In opening file %d ",fd);
-    }
-    switch(kidpid = fork())
-    {
-	    case -1:
-		    perror("FORK");
-	    case 0: // Redirect StdOut to file
-		   if(dup2(fd, STDOUT_FILENO) > 0 ){
-			   perror("dup2 failed");
-			  
-			   exit(1);
-		   }
-		   close(fd);
-		   if( -1 == execvp(command[0], &command[0])){
-			   printf("error execvp ");
-		   }
-		   break;
-	    default:
-		   close(fd);
-		   int status = 0;
-		   waitpid(kidpid, &status, 0);
-		  // if(WEXITDTATUS(status) != 0){
-
-		  // wait(&status);
-		   break;
-    }
-    va_end(args);
-    printf("Exiting Redirect Function");
-    return true;
-}
-
-/*    pid_t pid = fork();
+    pid_t pid = fork();
     if(pid < 0){
 	    perror("Error : fork");
 	    va_end(args);
@@ -229,5 +163,3 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     va_end(args);
     return true;
 }
-*/
-
