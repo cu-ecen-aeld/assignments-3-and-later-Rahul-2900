@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <fcntl.h>
